@@ -24,6 +24,7 @@ public class QuizActivity extends AppCompatActivity {
     private boolean mIsCheater;
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
+    private static final String KEY_CHEATED = "user_has_cheated";
     private static final int REQUEST_CODE_CHEAT = 0;
 
     private Question[] mQuestionBank = new Question[] {
@@ -38,13 +39,23 @@ public class QuizActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
         savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
+        savedInstanceState.putBoolean(KEY_CHEATED, mIsCheater);
     }
 
+    /**
+     * The updateQuestion() method updates
+     * the question being displayed to the user.
+     */
     private void updateQuestion(){
         int question = mQuestionBank[mCurrentIndex].getTextResID();
         mQuestionTextView.setText(question);
     }
 
+    /**
+     * checkAnswer() Method checks whether a user entered
+     * the correct answer and displays the result on the screen.
+     * @param userPressedTrue
+     */
     private void checkAnswer(boolean userPressedTrue){
         boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
 
@@ -84,6 +95,7 @@ public class QuizActivity extends AppCompatActivity {
 
         if(savedInstanceState != null) {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
+            mIsCheater = savedInstanceState.getBoolean(KEY_CHEATED);
         }
 
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
