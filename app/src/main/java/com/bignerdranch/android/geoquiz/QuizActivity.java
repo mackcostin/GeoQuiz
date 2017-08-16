@@ -22,17 +22,18 @@ public class QuizActivity extends AppCompatActivity {
     private TextView mQuestionTextView;
     private int mCurrentIndex = 0;
     private boolean mIsCheater;
+
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
     private static final String KEY_CHEATED = "user_has_cheated";
     private static final int REQUEST_CODE_CHEAT = 0;
 
     private Question[] mQuestionBank = new Question[] {
-        new Question(R.string.question_oceans, true),
-        new Question(R.string.question_mideast, false),
-        new Question(R.string.question_africa, false),
-        new Question(R.string.question_americas, true),
-        new Question(R.string.question_asia, true),
+        new Question(R.string.question_oceans, true, false),
+        new Question(R.string.question_mideast, false, false),
+        new Question(R.string.question_africa, false, false),
+        new Question(R.string.question_americas, true, false),
+        new Question(R.string.question_asia, true, false),
     };
 
     @Override
@@ -57,12 +58,13 @@ public class QuizActivity extends AppCompatActivity {
      * @param userPressedTrue
      */
     private void checkAnswer(boolean userPressedTrue){
-        boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
+        boolean answerIsTrue = mQuestionBank[mCurrentIndex].getAnswerTrue();
 
         int messageResId = 0;
 
-        if(mIsCheater) {
+        if(mIsCheater || mQuestionBank[mCurrentIndex].getHasCheated() == true) {
             messageResId = R.string.judgement_toast;
+            mQuestionBank[mCurrentIndex].setHasCheated(true);
         } else {
             if (userPressedTrue == answerIsTrue) {
                 messageResId = R.string.correct_toast;
@@ -128,7 +130,7 @@ public class QuizActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Start CheatActivity
-                boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
+                boolean answerIsTrue = mQuestionBank[mCurrentIndex].getAnswerTrue();
                 Intent i = CheatActivity.newIntent(QuizActivity.this, answerIsTrue);
                 startActivityForResult(i, REQUEST_CODE_CHEAT);
             }
@@ -158,7 +160,6 @@ public class QuizActivity extends AppCompatActivity {
         });
         updateQuestion();
     }
-
 
     @Override
     public void onStart() {
